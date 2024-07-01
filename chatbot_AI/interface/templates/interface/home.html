@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyChatbot</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'interface/styles.css' %}">
+    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous">
+    </script>
+</head>
+<body>
+    <div class="chat-container">
+        <div class="chat-box" id="chat-box">
+            <div class="message received">
+                <span class="message-content">AI: Hello! How can I help you today?</span>
+            </div>
+            <!-- More messages can be added dynamically or statically -->
+        </div>
+        <div class="chat-input">
+            <input type="text" id="user-input" placeholder="Type your message..." name="userMessage">
+            <input type="submit" id="send-button" value="Send">
+        </div>
+    </div>
+
+    <script>
+        function getUserResponse(){
+            var usertext=$('#user-input').val();
+            var userHTML = "<div class='usertext'><span>User: "+usertext+"</span></div>";
+            $('#user-input').val("");
+            $('#chat-box').append(userHTML);
+
+            $.get('/getResponse',{userMessage:usertext}).done(function(data){
+                var returned="<div class='chat-response'><span>AI: "+data+"</span></div>";
+                $('#chat-box').append(returned);
+            })
+        }
+
+        $('#send-button').click(function(){
+            getUserResponse();
+        })
+
+        $(document).keypress(function(event){
+            if(event.which === 13){ // 13 is the keycode for Enter key
+                getUserResponse();
+            }
+        })
+    </script>
+</body>
+</html>
